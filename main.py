@@ -4,8 +4,6 @@ from flask_cors import CORS
 import traceback
 import threading
 from datetime import datetime, timedelta
-from flask import Flask, render_template, request, jsonify
-import os
 
 app = Flask(__name__)
 CORS(app)
@@ -47,14 +45,9 @@ STAGES = [
     {"roe": 130.0, "trail": "0.50", "v_trail": "1.50"}  
 ]
 
-# --- CREDENTIAL LOADING ---
-# Use Uppercase to match the variables used inside your functions
-API_KEY = os.getenv("DELTA_API_KEY")
-API_SECRET = os.getenv("DELTA_API_SECRET")
-
-# Always check if they loaded correctly to prevent crashes
-if not API_KEY or not API_SECRET:
-    raise ValueError("Missing API credentials! Check your Railway Environment Variables.")
+# API KEYS
+API_KEY = os.getenv("DELTA_API_KEY", "926ZP6oByHTDNtoplpflp64imuDKHk")
+API_SECRET = os.getenv("DELTA_API_SECRET", "1v6SbRZTHF2FSUTjkoK8cNwRSv1yDZmHAE8TugqokLRVn1tt21OD3BnwfJ2r")
 BASE_URL = 'https://api.india.delta.exchange'
 
 latest_signal = {"action": "WAITING", "time": "--:--"}
@@ -398,13 +391,6 @@ def webhook():
     except Exception as e:
         app.logger.error(f"WEBHOOK ERROR: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
-
-@app.route('/')
-def index():
-    try:
-        return render_template('index.html')
-    except Exception as e:
-        return str(e) # This will print the actual error on your screen
             
 @app.route('/emergency-exit', methods=['POST'])
 def emergency_exit_route():
@@ -489,11 +475,11 @@ def get_app_data():
         
         return jsonify({
             "available_margin": f"{available_usd:.2f}",
-            "available_margin_inr": f"â¹{available_usd * USD_INR_FIXED:,.2f}",
+            "available_margin_inr": f"Ã¢ÂÂ¹{available_usd * USD_INR_FIXED:,.2f}",
             "total_upnl": f"{total_upnl_usd:.4f}",
             "total_upnl_pct": f"{upnl_pct:.2f}%", 
             "pnl_color": pnl_color,
-            "total_upnl_inr": f"â¹{total_upnl_usd * USD_INR_FIXED:,.2f}", 
+            "total_upnl_inr": f"Ã¢ÂÂ¹{total_upnl_usd * USD_INR_FIXED:,.2f}", 
             "quantity": str(max(0, qty)),
             "signal": latest_signal["action"],
             "signal_time": latest_signal.get("time", "--:--"),
