@@ -7,8 +7,6 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
-CORS(app) # This enables communication between your browser and your API
-app = Flask(__name__)
 CORS(app)
 
 # Use a persistent session for faster API calls
@@ -397,7 +395,10 @@ def webhook():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        return str(e) # This will print the actual error on your screen
             
 @app.route('/emergency-exit', methods=['POST'])
 def emergency_exit_route():
