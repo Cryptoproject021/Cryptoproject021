@@ -46,9 +46,13 @@ STAGES = [
     {"roe": 130.0, "trail": "0.50", "v_trail": "1.50"}  
 ]
 
-# API KEYS
-API_KEY = os.getenv("DELTA_API_KEY", "926ZP6oByHTDNtoplpflp64imuDKHk")
-API_SECRET = os.getenv("DELTA_API_SECRET", "1v6SbRZTHF2FSUTjkoK8cNwRSv1yDZmHAE8TugqokLRVn1tt21OD3BnwfJ2r")
+# REPLACE IT WITH THIS:
+api_key = os.getenv("DELTA_API_KEY")
+api_secret = os.getenv("DELTA_API_SECRET")
+
+# Always check if they loaded correctly to prevent crashes
+if not api_key or not api_secret:
+    raise ValueError("Missing API credentials! Check your Railway Environment Variables.")
 BASE_URL = 'https://api.india.delta.exchange'
 
 latest_signal = {"action": "WAITING", "time": "--:--"}
