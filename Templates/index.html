@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delta Pro Web</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; color: white; font-family: sans-serif; }
+        .app-container { display: flex; height: 100vh; }
+        
+        /* Sidebar Styles */
+        .sidebar { width: 250px; background: #111; padding: 15px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+        .tile { background: #222; padding: 10px; border-radius: 8px; }
+        .btn { padding: 10px; border: none; border-radius: 5px; color: white; cursor: pointer; width: 100%; margin-top: 5px; }
+        .btn-green { background: green; } .btn-red { background: red; } .btn-gray { background: gray; }
+        
+        /* Chart Styles */
+        .chart-area { flex-grow: 1; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="sidebar">
+        <h3>DELTA PRO</h3>
+        <div class="tile">
+            <div>AUTO TRADE: <input type="checkbox" id="autoTrade"></div>
+            <div>AUTO FLIP: <input type="checkbox" id="autoFlip"></div>
+        </div>
+        <div class="tile">
+            <div id="signalDisplay">SIGNAL: WAITING</div>
+        </div>
+        <div class="tile">
+            <div>MARGIN: <span id="margin">$0.00</span></div>
+            <div>UPNL: <span id="upnl">$0.00</span></div>
+        </div>
+        <button class="btn btn-green" onclick="sendAction('BUY')">BUY</button>
+        <button class="btn btn-red" onclick="sendAction('SELL')">SELL</button>
+        <button class="btn btn-gray" onclick="sendAction('EXIT')">EXIT</button>
+        <div id="statusMsg" style="font-size: 10px; color: yellow;">SYSTEM ONLINE</div>
+    </div>
+
+    <div class="chart-area">
+        <iframe src="https://in.tradingview.com/chart/v7gvg5e9/"></iframe>
+    </div>
+</div>
+
+<script>
+    const RAILWAY_URL = "https://cryptoproject021-production.up.railway.app";
+
+    // Update function (replaces your SwiftUI Timer)
+    async function updateData() {
+        try {
+            const response = await fetch(`${RAILWAY_URL}/get-app-data`);
+            const data = await response.json();
+            
+            document.getElementById('margin').innerText = `$${data.available_margin}`;
+            document.getElementById('upnl').innerText = `$${data.total_upnl}`;
+            document.getElementById('signalDisplay').innerText = `SIGNAL: ${data.signal}`;
+            document.getElementById('statusMsg').innerText = `LAST UPDATE: ${new Date().toLocaleTimeString()}`;
+        } catch (err) {
+            console.error("Fetch error:", err);
+        }
+    }
+
+    async function sendAction(side) {
+        const payload = side === 'EXIT' ? {} : { action: side, manual: true };
+        const endpoint = side === 'EXIT' ? '/emergency-exit' : '/webhook';
+        
+        await fetch(`${RAILWAY_URL}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        alert(side + " command sent");
+    }
+
+    // Refresh every 2 seconds
+    setInterval(updateData, 2000);
+    updateData();
+</script>
+</body>
+</html>
