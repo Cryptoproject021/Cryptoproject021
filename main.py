@@ -47,12 +47,13 @@ STAGES = [
     {"roe": 130.0, "trail": "0.50", "v_trail": "1.50"}  
 ]
 
-# REPLACE IT WITH THIS:
-api_key = os.getenv("DELTA_API_KEY")
-api_secret = os.getenv("DELTA_API_SECRET")
+# --- CREDENTIAL LOADING ---
+# Use Uppercase to match the variables used inside your functions
+API_KEY = os.getenv("DELTA_API_KEY")
+API_SECRET = os.getenv("DELTA_API_SECRET")
 
 # Always check if they loaded correctly to prevent crashes
-if not api_key or not api_secret:
+if not API_KEY or not API_SECRET:
     raise ValueError("Missing API credentials! Check your Railway Environment Variables.")
 BASE_URL = 'https://api.india.delta.exchange'
 
