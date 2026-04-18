@@ -4,8 +4,7 @@ from flask_cors import CORS
 import traceback
 import threading
 from datetime import datetime, timedelta
-from flask import Flask, render_template
-from flask_cors import CORS
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 CORS(app) # This enables communication between your browser and your API
